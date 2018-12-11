@@ -19,11 +19,20 @@ Unless said otherwise, all sections, indexes, variables etc. SHOULD align to 8 b
 
 Format allows padding between [Index](Index) and Key + Value pairs, and padding after every Key + Value pair
 
+&nbsp;
+
 ## Types
 
 Every type has own ID which is ALWAYS *unsigned 64 bit integer*
 
+With single variables the actual value is there and there SHOULD be padding in case the value does not end to 64 bit boundary.
+
+With arrays there is ALWAYS *unsigned 64 bit integer* that tells how many bytes of data the array contains or how many bits the array contains in case of booleans. Actual data is ALWAYS after the count and there SHOULD be padding in case the array does not end to 64 bit boundary.
+
+&nbsp;
+
 ### Special types
+
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
 | Special      | Reserved for special cases | 0 | **0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
@@ -33,6 +42,8 @@ Every type has own ID which is ALWAYS *unsigned 64 bit integer*
 ### Unsigned integer types
 
 Notice that unsigned 8 bit integer is also byte
+
+#### Single variables
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -49,7 +60,26 @@ Notice that unsigned 8 bit integer is also byte
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of unsigned 8 bit integers | Unsigned 8 bit integer, equals byte, range [0 .. 255] |   65537 | **0x01 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 16 bit integer | Unsigned 16 bit integer, range [0 .. 65535] | 65538 | **0x02 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 32 bit integer | Unsigned 32 bit integer, range [0 .. 4294967295] | 65539 | **0x03 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 64 bit integer | Unsigned 64 bit integer, range [0 .. 18446744073709551615]  | 65540 | **0x04 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 128 bit integer | Unsigned 128 bit integer, range [0 .. 2<sup>128</sup>−1]  | 65541 | **0x05 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 256 bit integer | Unsigned 256 bit integer, range [0 .. 2<sup>256</sup>−1] | 65542 | **0x06 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 512 bit integer | Unsigned 512 bit integer, range [0 .. 2<sup>512</sup>−1]  | 65543 | **0x07 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 1024 bit integer | Unsigned 1024 bit integer, range [0 .. 2<sup>1024</sup>−1]  | 65544 | **0x08 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 2048 bit integer | Unsigned 2048 bit integer, range [0 .. 2<sup>2048</sup>−1]  | 65545 | **0x09 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 4096 bit integer | Unsigned 4096 bit integer, range [0 .. 2<sup>4096</sup>−1]  | 65546 | **0x0A 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
 ### Signed integers types
+
+#### Single variables
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -66,9 +96,28 @@ Notice that unsigned 8 bit integer is also byte
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of signed 8 bit integers | Signed 8 bit integer, range [-128 .. 127]  | 16842753 | **0x01 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 16 bit integers | Signed 16 bit integer, range [-32768 .. 32767]  | 16842754 | **0x02 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 32 bit integers | Signed 32 bit integer, range [-2147483648 .. 2 147 483 647]  | 16842755 | **0x03 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 64 bit integers | Signed 64 bit integer, range [-9 223 372 036 854 775 808 .. 9 223 372 036 854 775 807] | 16842756 | **0x04 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 128 bit integers | Signed 128 bit integer, range [-2<sup>127</sup> .. 2<sup>127</sup>−1]  | 16842757 | **0x05 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 256 bit integers | Signed 256 bit integer, range [-2<sup>255</sup> .. 2<sup>255</sup>−1]  | 16842758 | **0x06 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 512 bit integers | Signed 512 bit integer, range [-2<sup>511</sup> .. 2<sup>511</sup>−1]  | 16842759 | **0x07 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 1024 bit integers | Signed 1024 bit integer, range [-2<sup>1023</sup> .. 2<sup>1023</sup>−1]  | 16842760 | **0x08 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 2048 bit integers | Signed 2048 bit integer, range [-2<sup>2047</sup> .. 2<sup>2047</sup>−1]   | 16842761 | **0x09 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+| Array of signed 4096 bit integers | Signed 4096 bit integer, range [-2<sup>4095</sup> .. 2<sup>4095</sup>−1]   | 16842762 | **0x0A 0x00 0x01 0x01 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
 ### Floating point types
 
 Most of these follow IEEE 754
+
+#### Single variables
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -82,9 +131,25 @@ Most of these follow IEEE 754
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of 8 bit floating points | 8 bit floating point format | 33619969 | **0x01 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 16 bit floating points | 16 bit floating point format, binary16 from IEEE 754 | 33619970 | **0x02 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 32 bit floating points | 32 bit floating point format, binary32 from IEEE 754 | 33619971 | **0x03 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 64 bit floating points | 64 bit floating point format, binary64 from IEEE 754 | 33619972 | **0x04 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 128 bit floating points | 128 bit floating point format, binary128 from IEEE 754 | 33619973 | **0x05 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 256 bit floating points | 256 bit floating point format, binary256 from IEEE 754 | 33619974 | **0x06 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+| Array of 512 bit floating points | 512 bit floating point format | 33619975 | **0x07 0x00 0x01 0x02 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
 ### Unsigned fixed point types
 
 For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_format))
+
+#### Single variables
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -98,9 +163,25 @@ For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_f
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of unsigned 8 bit fixed points | Unsigned 8 bit fixed point format, UQ4.4 | 50397185 | **0x01 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 16 bit fixed points | Unsigned 16 bit fixed point format, UQ8.8 | 50397186 | **0x02 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 32 bit fixed points | Unsigned 32 bit fixed point format, UQ16.16 | 50397187 | **0x03 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 64 bit fixed points | Unsigned 64 bit fixed point format, UQ32.32 | 50397188 | **0x04 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 128 bit fixed points | Unsigned 128 bit fixed point format, UQ64.64 | 50397189 | **0x05 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 256 bit fixed points | Unsigned 256 bit fixed point format, UQ128.128 | 50397190 | **0x06 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+| Array of unsigned 512 bit fixed points | Unsigned 512 bit fixed point format, UQ256.256 | 50397191 | **0x07 0x00 0x01 0x03 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
 ### Signed fixed point types
 
 For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_format))
+
+#### Single variables
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -114,9 +195,23 @@ For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_f
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of signed 8 bit fixed points | Signed 8 bit fixed point format, Q3.4 | 67174401 | **0x01 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 16 bit fixed points | Signed 16 bit fixed point format, Q7.8 | 67174402 | **0x02 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 32 bit fixed points | Signed 32 bit fixed point format, Q15.16  | 67174403 | **0x03 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 64 bit fixed points | Signed 64 bit fixed point format, Q31.32 | 67174404 | **0x04 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 128 bit fixed points | Signed 128 bit fixed point format, Q63.64 | 67174405 | **0x05 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 256 bit fixed points | Signed 256 bit fixed point format, Q127.128 | 67174406 | **0x06 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+| Array of signed 512 bit fixed points | Signed 512 bit fixed point format, Q255.256  | 67174407 | **0x07 0x00 0x01 0x04 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
 ### String types
 
-Strings are stored as bytes
+Strings are stored as bytes. They are same as arrays of other types, so there is ALWAYS *unsigned 64 bit integer* that tells how many bytes of data will follow
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -129,9 +224,21 @@ Strings are stored as bytes
 
 ### Boolean types
 
+#### Single variables
+
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
 | Common boolean | It is either True (1) or False (0) | 100663297 | **0x01 0x00 0x00 0x06 0x00 0x00 0x00 0x00**
+
+&nbsp;
+
+#### Arrays
+
+Notice that with boolean arrays the count is always bits
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of common booleans | It is either True (1) or False (0) | 100728833 | **0x01 0x00 0x01 0x06 0x00 0x00 0x00 0x00**
 
 ## Header section
 
