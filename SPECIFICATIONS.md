@@ -15,7 +15,7 @@
 
 Unless said otherwise, all types are assumed [little endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) and [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
 
-Unless said otherwise, all sections, indexes, variables etc. SHOULD align to 8 byte sections.
+Unless said otherwise, all sections, indexes, variables etc. SHOULD align to 8 byte (64 bit) sections.
 
 Format allows padding between [Index](Index) and Key + Value pairs, and padding after every Key + Value pair
 
@@ -27,7 +27,7 @@ Every type has own ID which is ALWAYS *unsigned 64 bit integer*
 
 With single variables the actual value is there and there SHOULD be padding in case the value does not end to 64 bit boundary.
 
-With arrays there is ALWAYS *unsigned 64 bit integer* that tells how many bytes of data the array contains or how many bits the array contains in case of booleans. Actual data is ALWAYS after the count and there SHOULD be padding in case the array does not end to 64 bit boundary.
+With arrays there is ALWAYS count value *unsigned 64 bit integer* that tells how many bytes of data the array contains or how many bits the array contains in case of booleans. Actual data is ALWAYS after the count and there SHOULD be padding in case the array does not end to 64 bit boundary.
 
 &nbsp;
 
@@ -240,6 +240,22 @@ Notice that with boolean arrays the count is always bits
 | ------------- |:-------------:|:-------------:| -----:|
 | Array of common booleans | It is either True (1) or False (0) | 100728833 | **0x01 0x00 0x01 0x06 0x00 0x00 0x00 0x00**
 
+&nbsp;
+
+### Date/time types
+
+For Unix times (seconds and milliseconds), see [Unix time](https://en.wikipedia.org/wiki/Unix_time)  
+For ISO 8601, see [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+#### Single variables
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Unix time in seconds | Aka POSIX time and UNIX Epoch time in seconds, as 64 bit unsigned integer | 117440513 | **0x01 0x00 0x00 0x07 0x00 0x00 0x00 0x00**
+| Unix time in milliseconds | Aka POSIX time and UNIX Epoch time in milliseconds, as 64 bit unsigned integer | 117440514 | **0x02 0x00 0x00 0x07 0x00 0x00 0x00 0x00**
+| ISO 8601 | ISO 8601, as UTF-8 string | 117440515 | **0x03 0x00 0x00 0x07 0x00 0x00 0x00 0x00**
+
+
 ## Header section
 
 Header section in AUDALF means FourCC + Specification version + byte size of whole data
@@ -287,11 +303,15 @@ e.g. **0x68 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xC8 0x00 0x00 0x00 0x00 0x00 0x0
 
 ## Key + value pairs
 
+Order of **Key + value pairs** is not required. So you can reorder items when you serialize data e.g. better compression.
+
 ### Key
 
-As Key type is defined in Index section, you just read right amount of bytes, and that is the value. 
+As Key type is defined in Index section, you just read right amount of bytes (based on type), and that is the value. You might have to read variable amount of total bytes since arrays, strings etc. can be keys.
 
-If key type is 0 that means structure is a list, and key entries are list index values (as 64 unsigned integers). You SHOULD store list entries in ascending order, but that is not required.
+Every key entry SHOULD be unique. 
+
+If key type is 0 that means structure is a list, and key entries are list index values (as 64 bit unsigned integers). You SHOULD store list entries in ascending order, but that is not required.
 
 e.g. if type is Unsigned 32 bit integer, you read 4 bytes and use those as Unsigned 32 bit integer.
 
