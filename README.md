@@ -32,7 +32,7 @@ C# implementation will come later
 
 There are usually lots of 0x00 bytes because of alignments and making things future proof. So storage space wise this isn't optimal format. Also 64 bit little endian CPU assumption makes things a bit hard for other type of CPUs.
 
-Also dictionaries must have same key type (value types can be different between pairs).
+Also dictionaries must have same key type (value types can be different between pairs) and NULL keys are not allowed.
 
 ## License
 

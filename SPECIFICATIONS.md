@@ -13,11 +13,15 @@
 
 ## Common
 
+One byte is ALWAYS 8 bits.
+
 Unless said otherwise, all types are assumed [little endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) and [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
 
 Unless said otherwise, all sections, indexes, variables etc. SHOULD align to 8 byte (64 bit) sections.
 
-Format allows padding between [Index](Index) and Key + Value pairs, and padding after every Key + Value pair
+AUDALF allows padding between [Index](Index) and Key + Value pairs, and padding after every Key + Value pair
+
+Padding SHOULD be **0x00** (zeroes).
 
 &nbsp;
 
@@ -25,9 +29,9 @@ Format allows padding between [Index](Index) and Key + Value pairs, and padding 
 
 Every type has own ID which is ALWAYS *unsigned 64 bit integer*
 
-With single variables the actual value is there and there SHOULD be padding in case the value does not end to 64 bit boundary.
+With single variables the actual value starts immediately from location given and there SHOULD be padding after the value in case the value does not end to 8 byte (64 bit) boundary.
 
-With arrays there is ALWAYS count value *unsigned 64 bit integer* that tells how many bytes of data the array contains or how many bits the array contains in case of booleans. Actual data is ALWAYS after the count and there SHOULD be padding in case the array does not end to 64 bit boundary.
+With arrays there is ALWAYS count value *unsigned 64 bit integer* that tells how many bytes of data the array contains (in case the type has data length at least 8 bits) or how many values the array contains in case type has data length 7 bits or less (booleans are currently the only ones). Count does not include itself. Actual data is ALWAYS after the count and there SHOULD be padding in case the array does not end to 8 byte (64 bit) boundary.
 
 &nbsp;
 
@@ -47,16 +51,16 @@ Notice that unsigned 8 bit integer is also byte
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
-| Unsigned 8 bit integer      | Unsigned 8 bit integer, equals byte, range [0 .. 255]      |   1 | **0x01 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 16 bit integer      | Unsigned 16 bit integer, range [0 .. 65535]      |   2 | **0x02 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 32 bit integer      | Unsigned 32 bit integer, range [0 .. 4294967295]  |   3 | **0x03 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 64 bit integer      | Unsigned 64 bit integer, range [0 .. 18446744073709551615]  |   4 | **0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 128 bit integer      | Unsigned 128 bit integer, range [0 .. 2<sup>128</sup>−1]  |   5 | **0x05 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 256 bit integer      | Unsigned 256 bit integer, range [0 .. 2<sup>256</sup>−1] |   6 | **0x06 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 512 bit integer      | Unsigned 512 bit integer, range [0 .. 2<sup>512</sup>−1]  |   7 | **0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 1024 bit integer      | Unsigned 1024 bit integer, range [0 .. 2<sup>1024</sup>−1]  |   8 | **0x08 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 2048 bit integer      | Unsigned 2048 bit integer, range [0 .. 2<sup>2048</sup>−1]  |   9 | **0x09 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
-| Unsigned 4096 bit integer      | Unsigned 4096 bit integer, range [0 .. 2<sup>4096</sup>−1]  |   10 | **0x0A 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 8 bit integer | Unsigned 8 bit integer, equals byte, range [0 .. 255] |   1 | **0x01 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 16 bit integer | Unsigned 16 bit integer, range [0 .. 65535] |   2 | **0x02 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 32 bit integer | Unsigned 32 bit integer, range [0 .. 4294967295] |   3 | **0x03 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 64 bit integer | Unsigned 64 bit integer, range [0 .. 18446744073709551615] |   4 | **0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 128 bit integer | Unsigned 128 bit integer, range [0 .. 2<sup>128</sup>−1] |   5 | **0x05 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 256 bit integer | Unsigned 256 bit integer, range [0 .. 2<sup>256</sup>−1] |   6 | **0x06 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 512 bit integer | Unsigned 512 bit integer, range [0 .. 2<sup>512</sup>−1] |   7 | **0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 1024 bit integer | Unsigned 1024 bit integer, range [0 .. 2<sup>1024</sup>−1] |   8 | **0x08 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 2048 bit integer | Unsigned 2048 bit integer, range [0 .. 2<sup>2048</sup>−1] |   9 | **0x09 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
+| Unsigned 4096 bit integer | Unsigned 4096 bit integer, range [0 .. 2<sup>4096</sup>−1] |   10 | **0x0A 0x00 0x00 0x00 0x00 0x00 0x00 0x00**
 
 &nbsp;
 
@@ -64,7 +68,7 @@ Notice that unsigned 8 bit integer is also byte
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
-| Array of unsigned 8 bit integers | Unsigned 8 bit integer, equals byte, range [0 .. 255] |   65537 | **0x01 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
+| Array of unsigned 8 bit integers | Unsigned 8 bit integer, equals byte, range [0 .. 255] | 65537 | **0x01 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
 | Array of unsigned 16 bit integer | Unsigned 16 bit integer, range [0 .. 65535] | 65538 | **0x02 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
 | Array of unsigned 32 bit integer | Unsigned 32 bit integer, range [0 .. 4294967295] | 65539 | **0x03 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
 | Array of unsigned 64 bit integer | Unsigned 64 bit integer, range [0 .. 18446744073709551615]  | 65540 | **0x04 0x00 0x01 0x00 0x00 0x00 0x00 0x00**
@@ -211,16 +215,33 @@ For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_f
 
 ### String types
 
-Strings are stored as bytes. They are same as arrays of other types, so there is ALWAYS *unsigned 64 bit integer* that tells how many bytes of data will follow
+Strings are basically stored as byte arrays. See [ASCII](https://en.wikipedia.org/wiki/ASCII), [UTF-8](https://en.wikipedia.org/wiki/UTF-8), [UTF-16](https://en.wikipedia.org/wiki/UTF-16) and [UTF-32](https://en.wikipedia.org/wiki/UTF-32) for definitions.
+
+Only valid strings SHOULD be used, e.g. invalid surrogate pairs SHOULD NOT end in AUDALF.
+
+#### Single variables
+
+Single string variables are same as arrays of other types, so there is ALWAYS *unsigned 64 bit integer* that tells how many bytes of data will follow
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
-| ASCII   | ASCII | 83886081 | **0x01 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
-| UTF-8 Unicode | UTF-8 Unicode | 83886082 | **0x02 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
-| UTF-16 Unicode | UTF-16 Unicode | 83886083 | **0x03 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
-| UTF-32 Unicode | UTF-32 Unicode | 83886084 | **0x04 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
+| ASCII string  | ASCII string | 83886081 | **0x01 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
+| UTF-8 Unicode string | UTF-8 Unicode string | 83886082 | **0x02 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
+| UTF-16 Unicode string | UTF-16 Unicode string | 83886083 | **0x03 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
+| UTF-32 Unicode string | UTF-32 Unicode string | 83886084 | **0x04 0x00 0x00 0x05 0x00 0x00 0x00 0x00**
 
 &nbsp;
+
+#### Arrays
+
+Array of strings is made from multiple string variables. Section starts with *total count* that tells how many bytes all strings in array will take. After that there is chain of single string variables.
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of ASCII strings | ASCII string | 83951617 | **0x01 0x00 0x01 0x05 0x00 0x00 0x00 0x00**
+| Array of UTF-8 Unicode strings | UTF-8 Unicode string | 83951618 | **0x02 0x00 0x01 0x05 0x00 0x00 0x00 0x00**
+| Array of UTF-16 Unicode strings | UTF-16 Unicode string | 83951619 | **0x03 0x00 0x01 0x05 0x00 0x00 0x00 0x00**
+| Array of UTF-32 Unicode strings | UTF-32 Unicode string | 83951620 | **0x04 0x00 0x01 0x05 0x00 0x00 0x00 0x00**
 
 ### Boolean types
 
@@ -295,7 +316,7 @@ Other options are defined in types section.
 
 e.g. **0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that every dictionary key is 64 bit unsigned integer
 
-###  Entry definitions
+### Entry definitions
 
 There is 64 bit unsigned integer for every index item, so total is Index count * 8 bytes of entry points. Entry point is byte address location of key + value pair.
 
@@ -303,7 +324,7 @@ e.g. **0x68 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xC8 0x00 0x00 0x00 0x00 0x00 0x0
 
 ## Key + value pairs
 
-Order of **Key + value pairs** is not required. So you can reorder items when you serialize data e.g. better compression.
+Order of **Key + value pairs** is not required. So you can reorder items when you serialize data e.g. to get better compression.
 
 ### Key
 
