@@ -217,7 +217,7 @@ For Q notation see [Q (number format)](https://en.wikipedia.org/wiki/Q_(number_f
 
 Strings are basically stored as byte arrays. See [ASCII](https://en.wikipedia.org/wiki/ASCII), [UTF-8](https://en.wikipedia.org/wiki/UTF-8), [UTF-16](https://en.wikipedia.org/wiki/UTF-16) and [UTF-32](https://en.wikipedia.org/wiki/UTF-32) for definitions.
 
-Only valid strings SHOULD be used, e.g. invalid surrogate pairs SHOULD NOT end in AUDALF.
+Only valid strings SHOULD be used, e.g. invalid surrogate pairs SHOULD NOT be stored in AUDALF.
 
 #### Single variables
 
@@ -255,7 +255,7 @@ Array of strings is made from multiple string variables. Section starts with *to
 
 #### Arrays
 
-Notice that with boolean arrays the count is always bits
+Notice that with boolean arrays the count is always bits. So if there are e.g. 15 booleans, you read 2 bytes and ignore one bit from it.
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
@@ -276,6 +276,17 @@ For ISO 8601, see [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
 | Unix time in milliseconds | Aka POSIX time and UNIX Epoch time in milliseconds, as 64 bit unsigned integer | 117440514 | **0x02 0x00 0x00 0x07 0x00 0x00 0x00 0x00**
 | ISO 8601 | ISO 8601, as UTF-8 string | 117440515 | **0x03 0x00 0x00 0x07 0x00 0x00 0x00 0x00**
 
+&nbsp;
+
+### Arbitrarily large signed integer
+
+Large signed integer value that has no bounds (range limits). Also known as BigInteger or BigInt.
+
+#### Single variables
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Big integer, signed | Signed integer without range limits | 134217729 | **0x01 0x00 0x00 0x08 0x00 0x00 0x00 0x00**
 
 ## Header section
 
@@ -338,12 +349,9 @@ e.g. if type is Unsigned 32 bit integer, you read 4 bytes and use those as Unsig
 
 ### Value type ID
 
-This is ALWAYS *unsigned 64 bit integer*. Options are defined in types section.
+This is ALWAYS *unsigned 64 bit integer*. Options are defined in types section. If this is 0 (special type) then it means that value is NULL and next 8 bytes (64 bits) is another type ID that defines the format.
 
-### Value length
-
-This is ALWAYS 64 bit unsigned integer that tells how many bytes the value takes. Can be 0 in certain cases, e.g. with empty string. Value length max (0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF) means that value is NULL.
 
 ### Actual value bytes
 
-Value length amount of bytes that can be used as value for dictionary entry. Since length can be 0 or NULL, these bytes might not exist at all
+Value length amount of bytes that can be used as value for dictionary entry. Since value type ID can be NULL, these bytes might not exist at all.
