@@ -11,6 +11,17 @@
 
 # Specification for AUDALF
 
+**Table of Contents**
+
+| Section        | Description | Link |
+| ------------- |:-------------:| -----:|
+| Common      | Common definitions | [Common](#Common) |
+| Types      | List of types of variables that AUDALF supports | [Types](#Types) |
+| Header section | Definition of header section of AUDALF | [Header section](#Header-section) |
+| Index section | Definition of index section of AUDALF | [Index section](#Index-section) |
+| Key and value pairs | Definition of key and value pairs of AUDALT | [Key and value pairs](#Key-and-value-pairs)
+
+
 ## Common
 
 One byte is ALWAYS 8 bits.
@@ -19,9 +30,11 @@ Unless said otherwise, all types are assumed [little endian](https://en.wikipedi
 
 Unless said otherwise, all sections, indexes, variables etc. SHOULD align to 8 byte (64 bit) sections.
 
-AUDALF allows padding between [Index](Index) and Key + Value pairs, and padding after every Key + Value pair
+AUDALF allows padding between [Index](#Index-section) and Key + Value pairs, and padding after every Key + Value pair
 
 Padding SHOULD be **0x00** (zeroes).
+
+Whole AUDALF payload is NOT needed for parsing single key and value pair.
 
 &nbsp;
 
@@ -278,15 +291,35 @@ For ISO 8601, see [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
 
 &nbsp;
 
+#### Arrays
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of Unix time in seconds | Aka POSIX time and UNIX Epoch time in seconds, as 64 bit unsigned integer | 117506049 | **0x01 0x00 0x01 0x07 0x00 0x00 0x00 0x00**
+| Array of Unix time in milliseconds | Aka POSIX time and UNIX Epoch time in milliseconds, as 64 bit unsigned integer | 117506050 | **0x02 0x00 0x01 0x07 0x00 0x00 0x00 0x00**
+| Array of ISO 8601 | ISO 8601, as UTF-8 string | 117506051 | **0x03 0x00 0x01 0x07 0x00 0x00 0x00 0x00**
+
 ### Arbitrarily large signed integer
 
 Large signed integer value that has no bounds (range limits). Also known as BigInteger or BigInt.
 
 #### Single variables
 
+There is ALWAYS *unsigned 64 bit integer* at start that tells how many bytes of data will follow
+
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
 | Big integer, signed | Signed integer without range limits | 134217729 | **0x01 0x00 0x00 0x08 0x00 0x00 0x00 0x00**
+
+#### Arrays
+
+Array of arbitrarily large signed integers is made from multiple arbitrarily large signed integer variables. Section starts with *total count* that tells how many bytes all arbitrarily large signed integers in array will take. After that there is chain of single string variables.
+
+| Type        | Description | ID as number | ID as bytes  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Array of Big integers, signed | Array of Signed integers without range limits | 134283265 | **0x01 0x00 0x01 0x08 0x00 0x00 0x00 0x00**
+
+&nbsp;
 
 ## Header section
 
@@ -294,7 +327,7 @@ Header section in AUDALF means FourCC + Specification version + byte size of who
 
 ### FourCC
 
-[FourCC](https://en.wikipedia.org/wiki/FourCC) is ALWAYS '**AUDA**' as ACII in bytes, so **0x41 0x55 0x44 0x41**
+[FourCC](https://en.wikipedia.org/wiki/FourCC) is ALWAYS '**AUDA**' as ASCII in bytes, so **0x41 0x55 0x44 0x41**
 
 ### Specification version
 
@@ -307,6 +340,8 @@ Defines how many bytes the whole AUDALF data has (this includes EVERYTHING, mean
 e.g. **0x00 0x04 0x00 0x00 0x00 0x00 0x00 0x00** would mean that AUDALF size is 1024 bytes.
 
 The size DOES NOT mean that every byte has useful info. So you can padd the end of file if you want to do so.
+
+&nbsp;
 
 ## Index section
 
@@ -323,25 +358,27 @@ Defines what is the type for dictionary keys. Or defines that this is a list whe
 
 0 means that structure is a list, and key entries are list index values (as 64 unsigned integers). 
 
-Other options are defined in types section.
+Other options are defined in [types](#Types) section.
 
 e.g. **0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that every dictionary key is 64 bit unsigned integer
 
 ### Entry definitions
 
-There is 64 bit unsigned integer for every index item, so total is Index count * 8 bytes of entry points. Entry point is byte address location of key + value pair.
+There is 64 bit unsigned integer for every index item, so total is **Index count** * 8 bytes of entry points. Entry point is byte address location of [key + value pair](#Key-and-value-pairs) inside AUDALF payload.
 
 e.g. **0x68 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xC8 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that first entry is at byte address 104 (0x68) and second entry is at byte address 200 (0xC8)
 
-## Key + value pairs
+&nbsp;
+
+## Key and value pairs
 
 Order of **Key + value pairs** is not required. So you can reorder items when you serialize data e.g. to get better compression.
 
 ### Key
 
-As Key type is defined in Index section, you just read right amount of bytes (based on type), and that is the value. You might have to read variable amount of total bytes since arrays, strings etc. can be keys.
+As Key type is defined in [Index section](#Index-section), you just read right amount of bytes (based on type), and that is the value. You might have to read variable amount of total bytes since arrays, strings etc. can be keys.
 
-Every key entry SHOULD be unique. 
+Every key entry SHOULD be unique. In case of duplicate keys, the implementation can choose freely what to do.
 
 If key type is 0 that means structure is a list, and key entries are list index values (as 64 bit unsigned integers). You SHOULD store list entries in ascending order, but that is not required.
 
