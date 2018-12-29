@@ -323,7 +323,7 @@ Array of arbitrarily large signed integers is made from multiple arbitrarily lar
 
 ## Header section
 
-Header section in AUDALF means FourCC + Specification version + byte size of whole data
+Header section in AUDALF means FourCC + Specification version + byte size of whole data. Header section size is ALWAYS 16 bytes (128 bits).
 
 ### FourCC
 
@@ -345,10 +345,10 @@ The size DOES NOT mean that every byte has useful info. So you can padd the end 
 
 ## Index section
 
-Index section in AUDALF means Index count + Key type + entry definitions
+Index section in AUDALF means Index count + Key type + entry definitions. Header section size is at least 16 bytes, most likely more.
 
 ### Index count
-Defines how many index items there are. This is ALWAYS *unsigned 64 bit integer*. 
+Defines how many index items there are. This is ALWAYS *unsigned 64 bit integer*. If value is 0, then there aren't any data in [key and value pair](#Key-and-value-pairs) section.
 
 e.g. **0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that there are 4 items
 
@@ -364,7 +364,7 @@ e.g. **0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that every dictionar
 
 ### Entry definitions
 
-There is 64 bit unsigned integer for every index item, so total is **Index count** * 8 bytes of entry points. Entry point is byte address location of [key + value pair](#Key-and-value-pairs) inside AUDALF payload.
+There is 64 bit unsigned integer for every index item, so total is **Index count** * 8 bytes of entry points. Entry point is byte address location of [key and value pair](#Key-and-value-pairs) inside AUDALF payload.
 
 e.g. **0x68 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xC8 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that first entry is at byte address 104 (0x68) and second entry is at byte address 200 (0xC8)
 
@@ -380,7 +380,7 @@ As Key type is defined in [Index section](#Index-section), you just read right a
 
 Every key entry SHOULD be unique. In case of duplicate keys, the implementation can choose freely what to do.
 
-If key type is 0 that means structure is a list, and key entries are list index values (as 64 bit unsigned integers). You SHOULD store list entries in ascending order, but that is not required.
+If key type is 0 that means structure is a list, and key entries are zero based index values of that list (as 64 bit unsigned integers). You SHOULD store list entries in ascending order, but that is not required.
 
 e.g. if type is Unsigned 32 bit integer, you read 4 bytes and use those as Unsigned 32 bit integer.
 
