@@ -356,7 +356,7 @@ e.g. **0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00** would mean that there are 4 ite
 
 Defines what is the type for dictionary keys. Or defines that this is a list where key is the index number of the list. This is ALWAYS *unsigned 64 bit integer*. 
 
-0 means that structure is a list, and key entries are list index values (as 64 unsigned integers). 
+0 means that structure is a list, and key entries are list index values (as 64 bit unsigned integers). 
 
 Other options are defined in [types](#Types) section.
 
