@@ -26,7 +26,7 @@ Because I needed something like this for my personal project
 
 ## Implementations 
 
-C# implementation will come later
+C# implementation can be found from [here](https://github.com/mcraiha/CSharp-AUDALF)
 
 ## What are the negative traits?
 
