@@ -305,7 +305,7 @@ Large signed integer value that has no bounds (range limits). Also known as BigI
 
 #### Single variables
 
-There is ALWAYS *unsigned 64 bit integer* at start that tells how many bytes of data will follow
+There is ALWAYS *unsigned 64 bit integer* at start that tells how many bytes of data will follow. Then there are the bytes, which follow the [common BitInteger serialization format](https://docs.microsoft.com/en-us/dotnet/api/system.numerics.biginteger.tobytearray?view=netframework-4.8#System_Numerics_BigInteger_ToByteArray). e.g. 120 would be one byte 0x78, but 128 would be two bytes 0x80, 0x00
 
 | Type        | Description | ID as number | ID as bytes  |
 | ------------- |:-------------:|:-------------:| -----:|
